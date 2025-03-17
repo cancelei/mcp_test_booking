@@ -61,6 +61,22 @@ startCommand:
     required: ["AGENTQL_API_KEY"]
   commandFunction: |
     function getCommand(config) {
+      // Register tools and resources
+      MCP.registerTool("fetch_website", {
+        description: "Fetches and parses content from a website URL using AgentQL",
+        arguments: {
+          url: { type: "string", required: true }
+        }
+      });
+      
+      MCP.registerTool("extract_content", {
+        description: "Extracts specific content from a website using CSS selectors",
+        arguments: {
+          url: { type: "string", required: true },
+          selectors_json: { type: "string", required: false }
+        }
+      });
+
       return {
         command: "bundle",
         args: ["exec", "ruby", "server.rb"],
