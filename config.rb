@@ -6,14 +6,13 @@ Dotenv.load if File.exist?('.env')
 # Optional port configuration
 PORT = ENV['PORT'] || 3000
 
-# Verify required environment variables
-def verify_env_vars
-  missing_vars = []
-  missing_vars << 'LLM_API_KEY' unless ENV['LLM_API_KEY']
-  
-  if missing_vars.any?
-    puts "Error: Missing required environment variables: #{missing_vars.join(', ')}"
-    puts "Please set these variables in your .env file or environment."
-    exit 1
+# Warn about missing optional environment variables
+def check_env_vars
+  if ENV['AGENTQL_API_KEY'].nil? || ENV['AGENTQL_API_KEY'].empty?
+    puts "Warning: AGENTQL_API_KEY not set. Falling back to direct HTTP requests, which may not work for all websites."
+    puts "Set AGENTQL_API_KEY in your environment or .env file for better results."
   end
-end 
+end
+
+# Check environment variables (but don't exit if missing)
+check_env_vars unless ENV['SKIP_ENV_CHECK'] 

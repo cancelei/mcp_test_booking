@@ -1,0 +1,13 @@
+.git
+.github
+.env
+.env.*
+*.md
+!README.md
+test*
+.dockerignore
+.gitignore
+tmp/
+log/
+vendor/bundle/
+.bundle/ 
