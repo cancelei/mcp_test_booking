@@ -1,13 +1,96 @@
+#!/usr/bin/env ruby
 require 'mcp'
+require 'mcp/server'
 require 'net/http'
 require 'uri'
 require 'nokogiri'
 require 'json'
 require_relative 'config'
+require_relative 'tools/web_scraper'
 
-# Set up the MCP server
-name "website-info-mcp"
-version "1.0.0"
+# Configure logging
+def log_debug(message)
+  $stderr.puts "[DEBUG] #{message}"
+end
+
+log_debug "Starting MCP server initialization..."
+
+begin
+  # Set up the MCP server
+  server = MCP::Server.new(
+    name: "website-info-mcp",
+    version: "1.0.0"
+  )
+  log_debug "Server initialized"
+  
+  # Register tools
+  Tools::WebScraper.register(server)
+  log_debug "Tools registered"
+
+  # Register the website://info resource
+  server.resource "website://info" do
+    name "Website Information"
+    description "Extracts and parses information from websites"
+    
+    call do
+      log_debug "website://info resource called"
+      request_line = $stdin.gets
+      log_debug "Received request: #{request_line}"
+      
+      begin
+        request = JSON.parse(request_line, symbolize_names: true)
+        log_debug "Parsed request: #{request.inspect}"
+        
+        url = request.dig(:params, :url)
+        selectors_json = request.dig(:params, :selectors_json)
+        
+        log_debug "URL: #{url}"
+        log_debug "Selectors: #{selectors_json}"
+        
+        if url.nil?
+          log_debug "Error: URL parameter is required"
+          return {
+            status: "error",
+            message: "URL parameter is required"
+          }
+        end
+        
+        if selectors_json
+          log_debug "Calling extract_content tool"
+          server.call_tool("extract_content", { url: url, selectors_json: selectors_json })
+        else
+          log_debug "Calling fetch_website tool"
+          server.call_tool("fetch_website", { url: url })
+        end
+      rescue JSON::ParserError => e
+        log_debug "Error parsing request: #{e.message}"
+        {
+          status: "error",
+          message: "Invalid request format: #{e.message}"
+        }
+      rescue => e
+        log_debug "Error in resource call: #{e.message}\n#{e.backtrace.join("\n")}"
+        {
+          status: "error",
+          message: "Error processing request: #{e.message}"
+        }
+      end
+    end
+  end
+
+  log_debug "All components registered"
+  log_debug "Available tools: #{server.list_tools.map { |t| t[:name] }.inspect}"
+  log_debug "Available resources: #{server.list_resources.map { |r| r[:uri] }.inspect}"
+
+  # Start the MCP server
+  log_debug "Starting Website Info MCP Server..."
+  log_debug "Server starting..."
+  server.run
+
+rescue => e
+  log_debug "Fatal error during server initialization: #{e.message}\n#{e.backtrace.join("\n")}"
+  exit 1
+end
 
 # Configure AgentQL API
 AGENTQL_API_URL = ENV['AGENTQL_API_URL'] || "https://api.agentql.com/v1/query-data"
@@ -329,43 +412,4 @@ tool "extract_content" do
       }
     end
   end
-end
-
-# Main resource for website information
-resource "website://info" do
-  name "Website Information"
-  description "Extracts and parses information from websites"
-  
-  call do
-    # Parse URL and selectors_json from the request
-    request_line = $stdin.gets
-    request = JSON.parse(request_line, symbolize_names: true)
-    
-    url = request.dig(:params, :url)
-    selectors_json = request.dig(:params, :selectors_json)
-    
-    if url.nil?
-      return {
-        status: "error",
-        message: "URL parameter is required"
-      }
-    end
-    
-    begin
-      if selectors_json
-        call_tool("extract_content", { url: url, selectors_json: selectors_json })
-      else
-        call_tool("fetch_website", { url: url })
-      end
-    rescue => e
-      {
-        status: "error",
-        message: "Error processing request: #{e.message}"
-      }
-    end
-  end
-end
-
-# Start the MCP server
-puts "Starting Website Info MCP Server on port #{PORT}..."
-# MCP::Server.run is automatically called when the script ends 
+end 
