@@ -31,7 +31,7 @@ def test_website_info
     # Minimal query
     request.body = {
       url: test_url,
-      query: "{ title }"
+      query: "{ title and body}"
     }.to_json
     
     puts "Sending request to AgentQL API..."

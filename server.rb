@@ -7,6 +7,8 @@ require_relative 'config'
 
 # Set up the MCP server
 name "website-info-mcp"
+version "1.0.0"
+protocol_version "0.3"
 
 # Configure AgentQL API
 AGENTQL_API_URL = ENV['AGENTQL_API_URL'] || "https://api.agentql.com/v1/query-data"

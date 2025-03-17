@@ -13,15 +13,38 @@ port: 3000
 # MCP tools
 tools:
   - name: fetch_website
-    description: "Fetches the entire content of a website"
-    
+    description: "Fetches and parses content from a website URL using AgentQL"
+    arguments:
+      - name: url
+        type: string
+        required: true
+        description: "The URL of the website to fetch"
+  
   - name: extract_content
     description: "Extracts specific content from a website using CSS selectors"
+    arguments:
+      - name: url
+        type: string
+        required: true
+        description: "The URL of the website to parse"
+      - name: selectors_json
+        type: string
+        required: false
+        description: "CSS selectors to extract specific content as JSON string"
 
 # MCP resources
 resources:
   - name: "website://info"
-    description: "Provides information from websites"
+    description: "Extracts and parses information from websites"
+    parameters:
+      - name: url
+        type: string
+        required: true
+        description: "The URL of the website to fetch"
+      - name: selectors_json
+        type: string
+        required: false
+        description: "CSS selectors to extract specific content as JSON string"
 
 startCommand:
   type: stdio
@@ -31,22 +54,20 @@ startCommand:
       AGENTQL_API_KEY:
         type: string
         description: "API key for AgentQL service for enhanced web scraping capabilities"
-    required: []
+      PORT:
+        type: string
+        description: "Port to run the server on"
+        default: "3000"
+    required: ["AGENTQL_API_KEY"]
   commandFunction: |
     function getCommand(config) {
-      const env = { 
-        ...process.env,
-        PORT: "3000"
-      };
-      
-      if (config.AGENTQL_API_KEY) {
-        env.AGENTQL_API_KEY = config.AGENTQL_API_KEY;
-      }
-      
       return {
         command: "bundle",
         args: ["exec", "ruby", "server.rb"],
-        env
+        env: {
+          AGENTQL_API_KEY: config.AGENTQL_API_KEY,
+          PORT: config.PORT || "3000"
+        }
       };
     }
 
