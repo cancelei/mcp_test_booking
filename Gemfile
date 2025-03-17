@@ -5,3 +5,8 @@ gem 'nokogiri', '~> 1.15.0'
 gem 'json', '~> 2.6.3'
 gem 'dotenv', '~> 2.8.1'
 gem 'httparty'
+
+group :test do
+  gem 'minitest', '~> 5.18.0'
+  gem 'rake'
+end

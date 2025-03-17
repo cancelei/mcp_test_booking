@@ -12,6 +12,7 @@ GEM
     mcp-rb (0.3.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
+    minitest (5.18.1)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     nokogiri (1.15.7)
@@ -20,6 +21,7 @@ GEM
     nokogiri (1.15.7-x86_64-linux)
       racc (~> 1.4)
     racc (1.8.1)
+    rake (13.2.1)
 
 PLATFORMS
   ruby
@@ -30,7 +32,9 @@ DEPENDENCIES
   httparty
   json (~> 2.6.3)
   mcp-rb (~> 0.3.2)
+  minitest (~> 5.18.0)
   nokogiri (~> 1.15.0)
+  rake
 
 BUNDLED WITH
    2.6.2
