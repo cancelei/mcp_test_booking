@@ -1,0 +1,24 @@
+name: website-info-mcp
+version: 1.0.0
+description: An MCP server for extracting information from websites using AgentQL API
+
+# Environment variables
+env:
+  - name: AGENTQL_API_KEY
+    secret: true
+
+# Server configuration
+port: 3000
+
+# MCP tools
+tools:
+  - name: fetch_website
+    description: "Fetches the entire content of a website"
+    
+  - name: extract_content
+    description: "Extracts specific content from a website using CSS selectors"
+
+# MCP resources
+resources:
+  - name: "website://info"
+    description: "Provides information from websites" 
