@@ -1,0 +1,29 @@
+{
+  "name": "website-info-mcp",
+  "version": "1.0.0",
+  "type": "mcp",
+  "entrypoint": "server.rb",
+  "language": "ruby",
+  "runtime": "ruby3.0",
+  "description": "MCP server for fetching and parsing website content using AgentQL",
+  "environment": {
+    "AGENTQL_API_KEY": "${env:AGENTQL_API_KEY}",
+    "AGENTQL_API_URL": "${env:AGENTQL_API_URL}"
+  },
+  "resources": [
+    {
+      "name": "website://info",
+      "description": "Extracts and parses information from websites"
+    }
+  ],
+  "tools": [
+    {
+      "name": "fetch_website",
+      "description": "Fetches and parses content from a website URL using AgentQL"
+    },
+    {
+      "name": "extract_content",
+      "description": "Extracts specific content from a website using CSS selectors"
+    }
+  ]
+} 

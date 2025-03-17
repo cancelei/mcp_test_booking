@@ -1,0 +1,137 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+To create a Model Context Protocol (MCP) server using Ruby, the `mcp-rb` gem offers a streamlined and efficient approach. Below is a comprehensive guide to help you set up and run an MCP server using `mcp-rb`, utilizing tools written in Ruby.
+
+**1. Prerequisites**
+
+- **Ruby Installation**: Ensure that Ruby (version 3.0.0 or higher) is installed on your system. You can verify your Ruby version by running:
+
+  
+```bash
+  ruby -v
+  ```
+
+
+  If Ruby is not installed, download it from the [official Ruby website](https://www.ruby-lang.org/en/downloads/).
+
+- **Bundler**: This is a Ruby gem that manages dependencies for your project. Install it using:
+
+  
+```bash
+  gem install bundler
+  ```
+
+
+**2. Setting Up the Project**
+
+- **Create a New Directory**: Organize your project by creating a dedicated directory:
+
+  
+```bash
+  mkdir mcp_server_project
+  cd mcp_server_project
+  ```
+
+
+- **Initialize a New Gemfile**: Use Bundler to generate a Gemfile, which will manage your project's dependencies:
+
+  
+```bash
+  bundle init
+  ```
+
+
+**3. Adding Dependencies**
+
+- **Edit the Gemfile**: Open the Gemfile and add `mcp-rb` as a dependency:
+
+  
+```ruby
+  # Gemfile
+
+  source "https://rubygems.org"
+
+  gem "mcp-rb", "~> 0.3.3"
+  ```
+
+
+- **Install the Dependencies**: Run Bundler to install the specified gems:
+
+  
+```bash
+  bundle install
+  ```
+
+
+**4. Creating the MCP Server**
+
+- **Server Script**: Create a Ruby script (e.g., `server.rb`) to define and run your MCP server:
+
+  
+```ruby
+  # server.rb
+
+  require 'mcp'
+
+  name "example-mcp-server"
+  version "1.0.0"
+
+  # Define a simple resource
+  resource "example://greeting" do
+    name "Greeting Resource"
+    description "Returns a greeting message"
+    call { "Hello from the MCP server!" }
+  end
+
+  # Define a tool with an argument
+  tool "echo" do
+    description "Echoes the provided message"
+    argument :message, String, required: true, description: "Message to echo"
+    call do |args|
+      args[:message]
+    end
+  end
+
+  # Start the MCP server
+  MCP::Server.run
+  ```
+
+
+  This script sets up an MCP server with a resource that returns a greeting and a tool that echoes any provided message.
+
+**5. Running the Server**
+
+- **Execute the Server Script**: Run your server script using Ruby:
+
+  
+```bash
+  ruby server.rb
+  ```
+
+
+  The server will start, and you should see output indicating that it's running and ready to accept connections.
+
+**6. Testing the Server**
+
+- **MCP Inspector**: To test your MCP server, you can use the MCP Inspector tool. Install it using Bun:
+
+  
+```bash
+  bunx @modelcontextprotocol/inspector ./server.rb
+  ```
+
+
+  This command will run the inspector against your server script, allowing you to interactively test the defined resources and tools.
+
+**7. Additional Considerations**
+
+- **Documentation**: For more detailed information and advanced configurations, refer to the [mcp-rb GitHub repository](https://github.com/funwarioisii/mcp-rb).
+
+- **Security**: Ensure that your server is secured appropriately, especially if it's accessible over a network. Implement authentication and authorization as needed.
+
+- **Deployment**: For production environments, consider deploying your MCP server using platforms like [Smithery.ai](https://smithery.ai/) to ensure scalability and reliability.
+
+By following these steps, you can set up a functional MCP server using Ruby and the `mcp-rb` gem, providing a robust platform for integrating AI models with various tools and data sources. 
