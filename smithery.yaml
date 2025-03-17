@@ -21,4 +21,35 @@ tools:
 # MCP resources
 resources:
   - name: "website://info"
-    description: "Provides information from websites" 
+    description: "Provides information from websites"
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      AGENTQL_API_KEY:
+        type: string
+        description: "API key for AgentQL service for enhanced web scraping capabilities"
+    required: []
+  commandFunction: |
+    function getCommand(config) {
+      const env = { 
+        ...process.env,
+        PORT: "3000"
+      };
+      
+      if (config.AGENTQL_API_KEY) {
+        env.AGENTQL_API_KEY = config.AGENTQL_API_KEY;
+      }
+      
+      return {
+        command: "bundle",
+        args: ["exec", "ruby", "server.rb"],
+        env
+      };
+    }
+
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "." 
